@@ -7,20 +7,19 @@ from app.utils import load_credentials
 
 def main():
     username, password = load_credentials()
-    
     if not username or not password:
-        print("--- PESU Academy Login ---")
+        print("PESU Academy Login")
         username = input("Enter SRN: ").strip()
         password = getpass.getpass("Enter Password: ")
 
     if not username or not password:
-        print("Error: Username and password are required.")
+        print("Error: Username and password are required")
         sys.exit(1)
 
     wrapper = PESUWrapper(username, password)
 
     if not wrapper.login():
-        print("Login failed. Please check your credentials.")
+        print("Login failed, recheck credentials.")
         return
 
     if not wrapper.get_semester_id():

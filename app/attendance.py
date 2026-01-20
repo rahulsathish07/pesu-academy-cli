@@ -10,7 +10,7 @@ def parse_attendance_html(html_content):
     attendance_list = []
     for row in rows:
         cols = row.find_all("td")
-        if len(cols) >= 4:
+        if len(cols) >= 4:      #in pesuacademy there 0th row by itself starts with the attendance data and it is not a header row, hence we do not slice it.
             code = cols[0].get_text(strip=True)
             name = cols[1].get_text(strip=True)
             
