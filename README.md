@@ -32,4 +32,4 @@
   - [ ] Implement automatic `.env` creation after the first successful manual login.
   
   ## Disclaimer
-  This is an unofficial tool and is not affiliated with PES University. It is intended for personal use and learning. Use responsibly and in accordance with the university's terms of service.
+  This is an unofficial tool and is not affiliated with PES University. It is intended for personal use and learning purposes.
