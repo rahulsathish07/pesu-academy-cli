@@ -1,34 +1,49 @@
 import sys
+import getpass
+from tabulate import tabulate
 from app.wrapper import PESUWrapper
+from app.attendance import parse_attendance_html
 from app.utils import load_credentials
 
 def main():
-    # 1. Load credentials from .env for security
     username, password = load_credentials()
     
     if not username or not password:
-        print("Error: Credentials not found. Ensure your .env file is set up correctly.")
+        print("--- PESU Academy Login ---")
+        username = input("Enter SRN: ").strip()
+        password = getpass.getpass("Enter Password: ")
+
+    if not username or not password:
+        print("Error: Username and password are required.")
         sys.exit(1)
 
-    # 2. Initialize the wrapper with your credentials
-    print(f"--- PESU Academy Connection Test ---")
-    print(f"User: {username}")
     wrapper = PESUWrapper(username, password)
 
-    # 3. Step 1: Test Login Handshake
-    print("\n[1/2] Attempting login...")
-    if wrapper.login():
-        print("✅ Login successful! Session established.")
-        
-        # 4. Step 2: Test Semester ID Retrieval
-        print("[2/2] Fetching semester ID...")
-        if wrapper.get_semester_id():
-            print(f"✅ Semester ID retrieved: {wrapper.semester_id}")
-            print("\nSuccess: Your credentials and authentication logic are working.")
-        else:
-            print("❌ Failed to retrieve Semester ID. Check the HTML tags in wrapper.py.")
-    else:
-        print("❌ Login failed. Check your credentials or initial CSRF token extraction.")
+    if not wrapper.login():
+        print("Login failed. Please check your credentials.")
+        return
+
+    if not wrapper.get_semester_id():
+        print("Failed to retrieve Semester ID.")
+        return
+
+    raw_html = wrapper.fetch_attendance_raw()
+    if not raw_html:
+        print("Failed to fetch attendance data.")
+        return
+
+    attendance_data = parse_attendance_html(raw_html)
+    if not attendance_data:
+        print("No attendance records found.")
+        return
+
+    headers = ["Course Code", "Course Name", "Total Classes", "Percentage(%)"]
+    table = [
+        [item["course_code"], item["course_name"], item["total_classes"], item["percentage"]]
+        for item in attendance_data
+    ]
+
+    print("\n" + tabulate(table, headers=headers, tablefmt="grid"))
 
 if __name__ == "__main__":
     main()
