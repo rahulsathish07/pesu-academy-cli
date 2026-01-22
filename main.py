@@ -4,6 +4,8 @@ from tabulate import tabulate
 from app.wrapper import PESUWrapper
 from app.attendance import parse_attendance_html
 from app.utils import load_credentials
+from app.marks import parse_marks_html
+
 
 def main():
     username, password = load_credentials()
@@ -43,6 +45,34 @@ def main():
     ]
 
     print("\n" + tabulate(table, headers=headers, tablefmt="grid"))
+
+
+    #results part
+    print("\nFetching Internal Marks...")
+    raw_marks_html = wrapper.fetch_marks_raw()
+    marks_data = parse_marks_html(raw_marks_html)
+    
+    if marks_data:
+        headers = ["Course", "ISA 1", "ISA 2", "Asgn", "Final", "ESA"]
+        table = []
+        
+        for m in marks_data:
+            table.append([
+                m.get("course", "Unknown"), # Already cleaned in the parser hence not needed to slice here
+                m.get("isa1", "NA"),
+                m.get("isa2", "NA"),
+                m.get("assignment", "NA"),
+                m.get("final_isa", "NA"),
+                m.get("esa", "NA")
+            ])
+
+        #just formatting it
+        print("\n" + tabulate(
+            table, 
+            headers=headers, 
+            tablefmt="grid", 
+            maxcolwidths=[40, 7, 7, 7, 7, 7]
+        ))
 
 if __name__ == "__main__":
     main()

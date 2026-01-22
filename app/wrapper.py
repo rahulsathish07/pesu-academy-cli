@@ -73,3 +73,35 @@ class PESUWrapper:
 
         res = self.session.post(f"{self.base_url}s/studentProfilePESUAdmin", data=payload, headers=headers)
         return res.text if res.status_code == 200 else None
+
+    
+    def fetch_marks_raw(self):
+        # We use the semester ID found during login or manually set to 2930
+        sid = self.semester_id if self.semester_id else "2930"
+        
+        # payload differs in controllerMode and menuId 
+        payload = {
+            "controllerMode": "6402",
+            "actionType": "8",
+            "semid": str(sid),
+            "menuId": "652",
+            "_csrf": str(self.csrf)
+        }
+        
+        headers = {
+            "x-csrf-token": str(self.csrf),
+            "Referer": f"{self.base_url}s/studentProfilePESU",
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+        # This simulates the post request the browser made to load the table
+        res = self.session.post(
+            f"{self.base_url}s/studentProfilePESUAdmin", 
+            data=payload, 
+            headers=headers
+        )
+        return res.text if res.status_code == 200 else None
+
+
+
+    
