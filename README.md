@@ -25,8 +25,8 @@
   
   ## Roadmap and Pending Features
   The following features are planned for future iterations of this project:
-  - [ ] Implement a result update detector to notify users when new grades are posted.
-  - [ ] Add support for internal marks data.
+  - [x] Implement a result update detector to notify users when new grades are posted.
+  - [x] Add support for internal marks data.
   - [ ] Create a tool for number of available bunks (e.g., classes needed for 75%).
   - [ ] Add a local caching mechanism to reduce redundant network requests.
   - [ ] Implement automatic `.env` creation after the first successful manual login.
