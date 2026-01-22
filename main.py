@@ -3,8 +3,9 @@ import getpass
 from tabulate import tabulate
 from app.wrapper import PESUWrapper
 from app.attendance import parse_attendance_html
-from app.utils import load_credentials
+from app.utils import load_credentials, save_cache , load_cache 
 from app.marks import parse_marks_html
+
 
 
 def main():
@@ -52,6 +53,12 @@ def main():
     raw_marks_html = wrapper.fetch_marks_raw()
     marks_data = parse_marks_html(raw_marks_html)
     
+    previous_data = load_cache()
+    if previous_data and marks_data != previous_data:
+        print("\n" + "!" * 30)
+        print("NEW GRADE UPDATE DETECTED WOOO")
+        print("!" * 30 + "\n")
+
     if marks_data:
         headers = ["Course", "ISA 1", "ISA 2", "Asgn", "Final", "ESA"]
         table = []
@@ -73,6 +80,7 @@ def main():
             tablefmt="grid", 
             maxcolwidths=[40, 7, 7, 7, 7, 7]
         ))
+    save_cache(marks_data)
 
 if __name__ == "__main__":
     main()
